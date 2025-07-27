@@ -1,13 +1,13 @@
 import glob
 import pytest
 
-from __init__ import parse, open, ValidationError, CollectedValidationErrors, DuplicateNameError, HeaderFieldError
+from __init__ import parse, open, _ValidationError, CollectedValidationErrors, DuplicateNameError, HeaderFieldError
 from contextlib import nullcontext
 
 
 def create_context(fn):
     if "fail_" in fn:
-        return pytest.raises(ValidationError)
+        return pytest.raises(_ValidationError)
     else:
         return nullcontext()
 
@@ -120,7 +120,7 @@ def test_file_mvd_attr():
 ])
 def test_invalid_headers_(filename):
     # error in header
-    with pytest.raises(ValidationError):
+    with pytest.raises(_ValidationError):
         parse(filename=filename, with_tree=False, only_header=True)
 
 @pytest.mark.parametrize("filename", [
@@ -134,11 +134,11 @@ def test_valid_headers(filename):
         parse(filename=filename, with_tree=False, only_header=True)
 
 def test_header_entity_fields():
-    with pytest.raises(ValidationError):
+    with pytest.raises(_ValidationError):
         parse(filename='fixtures/fail_too_many_header_entity_fields.ifc', only_header=True)
 
 def test_header_entity_fields_whole_file():
-    with pytest.raises(ValidationError):
+    with pytest.raises(_ValidationError):
         parse(filename='fixtures/fail_too_many_header_entity_fields.ifc')
 
 def test_header_entity_fields_whole_file():

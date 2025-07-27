@@ -1,7 +1,10 @@
 from lark.exceptions import UnexpectedToken
 
-class ValidationError(Exception):
-    pass
+class _ValidationError(Exception):
+    def __init__(self, *args, **kwargs):
+        if self.__class__ is _ValidationError:
+            raise TypeError("Do not raise _ValidationError directly.")
+        super().__init__(*args, **kwargs)
 
 class ErrorCollector:
     def __init__(self):
@@ -14,7 +17,7 @@ class ErrorCollector:
         if self.errors:
             raise CollectedValidationErrors(self.errors)
 
-class CollectedValidationErrors(ValidationError):
+class CollectedValidationErrors(_ValidationError):
     def __init__(self, errors):
         self.errors = errors
         
@@ -24,7 +27,7 @@ class CollectedValidationErrors(ValidationError):
     def __str__(self):
         return f"{len(self.errors)} validation error(s) collected:\n" + "\n\n".join(str(e) for e in self.errors)
 
-class SyntaxError(ValidationError):
+class SyntaxError(_ValidationError):
     def __init__(self, filecontent, exception):
         self.filecontent = filecontent
         self.exception = exception
@@ -57,7 +60,7 @@ class SyntaxError(ValidationError):
         return f"On line {d['lineno']} column {d['column']}:\nUnexpected {sth}{d['found_type']} ('{d['found_value']}')\nExpecting {exp}\n{d['lineno']:05d} | {d['line']}\n        {' ' * (self.exception.column - 1)}^"
 
 
-class DuplicateNameError(ValidationError):
+class DuplicateNameError(_ValidationError):
     def __init__(self, filecontent, name, linenumbers):
         self.name = name
         self.filecontent = filecontent
@@ -83,7 +86,7 @@ class DuplicateNameError(ValidationError):
         return "\n".join(build())
     
     
-class HeaderFieldError(ValidationError):
+class HeaderFieldError(_ValidationError):
     def __init__(self, field, found_len, expected_len):
         self.field = field
         self.found_len = found_len

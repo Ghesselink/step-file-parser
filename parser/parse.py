@@ -8,7 +8,7 @@ from lark import Lark, UnexpectedCharacters, UnexpectedToken
 # import transformer
 from .transformer import Transformer, entity_instance, make_header_ent, create_step_entity
 from .grammar import grammar, HEADER_FIELDS
-from .errors import HeaderFieldError, DuplicateNameError, ErrorCollector, ValidationError, SyntaxError
+from .errors import HeaderFieldError, DuplicateNameError, ErrorCollector, SyntaxError
 
 def validate_header_fields(header, error_collector, only_header = False):
     for field in HEADER_FIELDS.keys():
