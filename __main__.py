@@ -1,7 +1,7 @@
 import sys
 import json
 import argparse
-from . import parse, ValidationError
+from . import parse, CollectedValidationErrors
 
 def main():
     parser = argparse.ArgumentParser(description="Parse and validate STEP file.")
@@ -22,11 +22,11 @@ def main():
         if not args.json:
             print("Valid", file=sys.stderr)
         exit(0)
-    except ValidationError as exc:
+    except CollectedValidationErrors as exc:
         if not args.json:
             print(exc, file=sys.stderr)
         else:
-            json.dump([e.asdict() for e in getattr(exc, "errors", [exc])], sys.stdout, indent=2)
+            json.dump([e.asdict() for e in exc.errors], sys.stdout, indent=2)
         exit(1)
 
 if __name__ == '__main__':
